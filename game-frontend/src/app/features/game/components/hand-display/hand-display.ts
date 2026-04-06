@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-hand-display',
-  imports: [],
-  template: `
-    <p>
-      hand-display works!
-    </p>
-  `,
-  styles: ``,
+  standalone: true,
+  imports: [CommonModule],
+  template: `<div>Hand Display Placeholder</div>`
 })
 export class HandDisplay {
-
+  @Input() hand: any;
 }

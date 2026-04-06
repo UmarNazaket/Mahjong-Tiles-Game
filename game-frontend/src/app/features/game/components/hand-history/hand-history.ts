@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-hand-history',
-  imports: [],
-  template: `
-    <p>
-      hand-history works!
-    </p>
-  `,
-  styles: ``,
+  standalone: true,
+  imports: [CommonModule],
+  template: `<div>Hand History Placeholder</div>`
 })
 export class HandHistory {
-
+  @Input() history: any[] = [];
 }

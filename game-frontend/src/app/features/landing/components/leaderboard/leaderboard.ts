@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-leaderboard',
-  imports: [],
-  template: `
-    <p>
-      leaderboard works!
-    </p>
-  `,
-  styles: ``,
+  standalone: true,
+  imports: [CommonModule],
+  template: `<div>Leaderboard Placeholder</div>`
 })
-export class Leaderboard {
-
+export class LeaderboardComponent {
+  @Input() entries: any[] = [];
 }

@@ -2,10 +2,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'tileIcon',
-  standalone: true
 })
 export class TileIconPipe implements PipeTransform {
-  transform(value: any): string {
-    return '';
+
+  transform(value: unknown, ...args: unknown[]): unknown {
+    return null;
   }
+
 }
