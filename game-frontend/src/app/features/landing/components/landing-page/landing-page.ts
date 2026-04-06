@@ -1,15 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [],
-  template: `
-    <p>
-      landing-page works!
-    </p>
-  `,
-  styles: ``,
+  standalone: true,
+  imports: [CommonModule],
+  template: `<div>Landing Page Placeholder</div>`
 })
-export class LandingPage {
-
+export class LandingPage implements OnInit {
+  ngOnInit() {}
+  startGame() {}
 }

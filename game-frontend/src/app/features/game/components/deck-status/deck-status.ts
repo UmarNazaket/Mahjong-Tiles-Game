@@ -1,15 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-deck-status',
-  imports: [],
-  template: `
-    <p>
-      deck-status works!
-    </p>
-  `,
-  styles: ``,
+  standalone: true,
+  imports: [CommonModule],
+  template: `<div>Deck Status Placeholder</div>`
 })
 export class DeckStatus {
-
+  @Input() drawCount: number = 0;
+  @Input() discardCount: number = 0;
+  @Input() reshuffleCount: number = 0;
 }
