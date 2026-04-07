@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, 
 import { CommonModule } from '@angular/common';
 import { Tile } from '../../../../core/models/tile.model';
 import { TileIconPipe } from '../../../../shared/pipes/tile-icon.pipe';
+import { SoundService } from '../../../../core/services/sound.service';
 
 @Component({
   selector: 'app-tile',
@@ -340,6 +341,7 @@ import { TileIconPipe } from '../../../../shared/pipes/tile-icon.pipe';
 })
 export class TileComponent implements OnInit, OnChanges {
   private cdr = inject(ChangeDetectorRef);
+  private sound = inject(SoundService);
 
   @Input({ required: true }) tile!: Tile;
   @Input() compact: boolean = false;
@@ -396,6 +398,8 @@ export class TileComponent implements OnInit, OnChanges {
   ngOnInit() {
     if (this.animateFlip) {
       this.isRevealing = true;
+      // Play clack in sync with the CSS flip (delay matches animation-delay)
+      setTimeout(() => this.sound.playClack(), this.delay);
     }
   }
 
@@ -410,14 +414,14 @@ export class TileComponent implements OnInit, OnChanges {
     const isNewTileId = changes['tile'].previousValue?.id !== changes['tile'].currentValue?.id;
 
     if (this.animateFlip && isNewTileId) {
-      // 1. Remove the class and force synchronous render so browser paints without it
       this.isRevealing = false;
       this.cdr.detectChanges();
 
-      // 2. Re-add on the next animation frame so the CSS animation restarts cleanly
       requestAnimationFrame(() => {
         this.isRevealing = true;
         this.cdr.detectChanges();
+        // Play clack in sync with the flip animation delay
+        setTimeout(() => this.sound.playClack(), this.delay);
       });
     }
   }
