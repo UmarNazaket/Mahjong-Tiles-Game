@@ -23,8 +23,11 @@ export class LeaderboardService {
     const scores = this.getTopScores();
     scores.push(entry);
 
-    // Sort descending by score
-    scores.sort((a, b) => b.score - a.score);
+    // Sort descending by score, then by roundsPlayed (more rounds = higher rank)
+    scores.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.roundsPlayed - a.roundsPlayed;
+    });
 
     // Keep only top N
     const topScores = scores.slice(0, this.config.leaderboardSize);

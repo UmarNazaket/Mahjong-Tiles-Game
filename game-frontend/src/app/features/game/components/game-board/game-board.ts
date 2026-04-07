@@ -61,6 +61,7 @@ import { MarketTracker } from '../market-tracker/market-tracker';
       <app-game-over 
         *ngIf="gameStore.isGameOver()"
         [score]="gameStore.score()"
+        [roundsPlayed]="gameStore.roundHistory().length"
         [reason]="gameStore.gameOverReason()"
         (submitScore)="onSubmitScore($event)"
         (playAgain)="onPlayAgain()"
