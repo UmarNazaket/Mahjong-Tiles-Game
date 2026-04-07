@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Hand } from '../../../../core/models/game.model';
+import { Tile } from '../../../../core/models/tile.model';
 import { TileComponent } from '../tile/tile.component';
 import { fadeInOut } from '../../../../shared/animations/game.animations';
 
@@ -16,7 +17,12 @@ import { fadeInOut } from '../../../../shared/animations/game.animations';
         <span class="total-value">{{ hand.totalValue }}</span>
       </div>
       <div class="tiles-container">
-        <app-tile *ngFor="let tile of hand.tiles" [tile]="tile"></app-tile>
+        <app-tile 
+          *ngFor="let tile of hand.tiles; let i = index; trackBy: trackByTileId" 
+          [tile]="tile"
+          [delay]="i * 120"
+          [animateFlip]="true">
+        </app-tile>
       </div>
     </div>
   `,
@@ -68,5 +74,9 @@ import { fadeInOut } from '../../../../shared/animations/game.animations';
 })
 export class HandDisplay {
   @Input() hand: Hand | null = null;
+
+  trackByTileId(index: number, tile: Tile): string {
+    return tile.id;
+  }
 }
 
