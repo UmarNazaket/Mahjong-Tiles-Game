@@ -46,7 +46,14 @@ export class ScoringService {
     hand.filter(t => t.category !== TileCategory.Number).forEach(tile => {
       const currentVal = updatedMap.get(tile.name) ?? tile.baseValue;
       const newVal = won ? currentVal + 1 : currentVal - 1;
-      updatedMap.set(tile.name, newVal);
+      
+      // Clamp the value to ensure it never exceeds boundaries if multiple identical tiles are in hand
+      const clampedVal = Math.max(
+        this.config.tileValueMin, 
+        Math.min(newVal, this.config.tileValueMax)
+      );
+      
+      updatedMap.set(tile.name, clampedVal);
     });
 
     return updatedMap;
