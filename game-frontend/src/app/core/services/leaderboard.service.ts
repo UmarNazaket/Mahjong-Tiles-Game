@@ -1,34 +1,39 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { StorageService } from './storage.service';
 import { LeaderboardEntry } from '../models/leaderboard.model';
+import { GAME_CONFIG, GameConfig } from '../config/game.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderboardService {
-  private storage = inject(StorageService);
-  private readonly leaderboardKey = 'mahjong_high_scores';
+  private readonly STORAGE_KEY = 'mahjong_leaderboard';
 
-  getTopScores(limit: number): LeaderboardEntry[] {
-    const scores = this.storage.get<LeaderboardEntry[]>(this.leaderboardKey) || [];
-    return scores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+  constructor(
+    private storageService: StorageService,
+    @Inject(GAME_CONFIG) private config: GameConfig
+  ) { }
+
+  getTopScores(): LeaderboardEntry[] {
+    const data = this.storageService.get<LeaderboardEntry[]>(this.STORAGE_KEY);
+    return data || [];
   }
 
-  saveScore(entry: LeaderboardEntry): void {
-    const scores = this.storage.get<LeaderboardEntry[]>(this.leaderboardKey) || [];
+  saveScore(entry: LeaderboardEntry): LeaderboardEntry[] {
+    const scores = this.getTopScores();
     scores.push(entry);
-    
-    // Sort and keep top 10 in storage
-    const topScores = scores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
 
-    this.storage.set(this.leaderboardKey, topScores);
+    // Sort descending by score
+    scores.sort((a, b) => b.score - a.score);
+
+    // Keep only top N
+    const topScores = scores.slice(0, this.config.leaderboardSize);
+    this.storageService.set(this.STORAGE_KEY, topScores);
+
+    return topScores;
   }
 
-  clear(): void {
-    this.storage.remove(this.leaderboardKey);
+  clearScores(): void {
+    this.storageService.remove(this.STORAGE_KEY);
   }
 }

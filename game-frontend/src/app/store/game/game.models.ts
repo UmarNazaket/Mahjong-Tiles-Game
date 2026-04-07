@@ -1,11 +1,11 @@
 import { GameStatus } from '../../core/enums/game.enums';
-import { Tile } from '../../core/models/tile.model';
 import { Hand, RoundResult } from '../../core/models/game.model';
+import { Tile as TileModel } from '../../core/models/tile.model';
 
 export interface GameState {
   status: GameStatus;
-  drawPile: Tile[];
-  discardPile: Tile[];
+  drawPile: TileModel[];
+  discardPile: TileModel[];
   activeHand: Hand | null;
   previousHand: Hand | null;
   roundHistory: RoundResult[];

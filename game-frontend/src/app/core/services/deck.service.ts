@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { GAME_CONFIG } from '../config/game.config';
+import { Injectable, Inject } from '@angular/core';
+import { GAME_CONFIG, GameConfig } from '../config/game.config';
 import { Tile } from '../models/tile.model';
 import { TileCategory, TileSuit, WindType, DragonType } from '../enums/game.enums';
 
@@ -7,7 +7,7 @@ import { TileCategory, TileSuit, WindType, DragonType } from '../enums/game.enum
   providedIn: 'root'
 })
 export class DeckService {
-  private config = inject(GAME_CONFIG);
+  constructor(@Inject(GAME_CONFIG) private config: GameConfig) { }
 
   generateFullDeck(): Tile[] {
     const deck: Tile[] = [];

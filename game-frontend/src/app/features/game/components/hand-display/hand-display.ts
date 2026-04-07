@@ -2,97 +2,63 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Hand } from '../../../../core/models/game.model';
 import { TileComponent } from '../tile/tile.component';
-import { popIn, staggerList } from '../../../../shared/animations/game.animations';
+import { fadeInOut } from '../../../../shared/animations/game.animations';
 
 @Component({
   selector: 'app-hand-display',
   standalone: true,
   imports: [CommonModule, TileComponent],
-  animations: [popIn, staggerList],
+  animations: [fadeInOut],
   template: `
-    <div class="hand-container" *ngIf="hand" [@popIn]>
-      
-      <div class="hand-header">
-        <h3 class="label">ACTIVE HAND</h3>
-        <div class="total-value">
-          <span class="value-text">TOTAL VALUE</span>
-          <span class="value-number">{{ hand.totalValue }}</span>
-        </div>
+    <div class="hand-display" *ngIf="hand" [@fadeInOut]>
+      <div class="total-value-container">
+        <span class="value-label">Current Hand Value:</span>
+        <span class="total-value">{{ hand.totalValue }}</span>
       </div>
-
-      <div class="tiles-wrapper" [@staggerList]="hand.tiles.length">
-        <app-tile 
-          *ngFor="let tile of hand.tiles" 
-          [tile]="tile"
-          [compact]="false">
-        </app-tile>
+      <div class="tiles-container">
+        <app-tile *ngFor="let tile of hand.tiles" [tile]="tile"></app-tile>
       </div>
-
     </div>
   `,
   styles: [`
-    .hand-container {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 24px;
-      padding: 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 800px;
-    }
-
-    .hand-header {
+    .hand-display {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 1.5rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-
-    .label {
-      font-size: 1rem;
-      font-weight: 800;
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 3px;
-      margin: 0;
-    }
-
-    .total-value {
+    .total-value-container {
       display: flex;
       align-items: center;
       gap: 1rem;
-      background: rgba(0, 210, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
       padding: 0.5rem 1.5rem;
-      border-radius: 50px;
-      border: 1px solid rgba(0, 210, 255, 0.3);
+      border-radius: 20px;
     }
-
-    .value-text {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #00d2ff;
-      letter-spacing: 1px;
+    .value-label {
+      color: #aaa;
+      font-size: 1.1rem;
     }
-
-    .value-number {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #fff;
-      font-family: 'Outfit', sans-serif;
-      text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    .total-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #f1c40f;
+      text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
     }
-
-    .tiles-wrapper {
+    .tiles-container {
       display: flex;
-      flex-wrap: wrap;
+      gap: 1rem;
       justify-content: center;
-      gap: 0.5rem;
+      flex-wrap: wrap;
     }
   `]
 })
 export class HandDisplay {
-  @Input() hand?: Hand | null;
+  @Input() hand: Hand | null = null;
 }
 

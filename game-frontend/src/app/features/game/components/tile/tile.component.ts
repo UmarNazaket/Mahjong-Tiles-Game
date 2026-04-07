@@ -1,178 +1,221 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tile } from '../../../../core/models/tile.model';
 import { TileCategory } from '../../../../core/enums/game.enums';
 import { TileIconPipe } from '../../../../shared/pipes/tile-icon.pipe';
+import { flipAnimation } from '../../../../shared/animations/game.animations';
 
 @Component({
   selector: 'app-tile',
   standalone: true,
   imports: [CommonModule, TileIconPipe],
+  animations: [flipAnimation],
   template: `
-    <div class="tile-wrapper" [class.compact]="compact">
-      <div class="tile-inner" [class.is-flipped]="isFlipped">
-        <!-- Back of the tile -->
-        <div class="tile-face tile-back">
-          <div class="back-design">🀫</div>
-        </div>
-        
-        <!-- Front of the tile -->
+    <div class="tile" 
+         [class.compact]="compact" 
+         [class.danger]="isDangerZone"
+         [@flip]="animationState">
+      <div class="tile-inner">
         <div class="tile-face tile-front">
-          <div class="tile-header">
+
+          <!-- Tile Name Label -->
+          <div class="tile-name" *ngIf="!compact">{{ tile.name }}</div>
+
+          <!-- Icon + Rank for Number tiles -->
+          <div class="tile-icon" 
+               [class.is-dragon]="tile.category === 'DRAGON'" 
+               [class.is-wind]="tile.category === 'WIND'">
+            {{ tile | tileIcon }}
           </div>
-          <div class="tile-body">
-            <span class="tile-icon" [ngClass]="getSuitClass()">
-              {{ (tile || null) | tileIcon }}
+
+          <!-- Rank badge for number tiles -->
+          <div class="tile-rank" *ngIf="tile.category === 'NUMBER' && !compact">
+            {{ tile.rank }}
+          </div>
+
+          <!-- Value + Change Indicator -->
+          <div class="tile-value-row">
+            <span class="change-indicator up" *ngIf="valueDelta > 0 && !hideArrows">▲</span>
+            <span class="change-indicator down" *ngIf="valueDelta < 0 && !hideArrows">▼</span>
+            <span class="tile-value" 
+                  [class.changed]="hasValueChanged"
+                  [class.danger-value]="isDangerZone">
+              {{ tile.currentValue }}
             </span>
-          </div>
-          <div class="tile-footer" *ngIf="!compact">
-            <span class="name">{{ tile?.name }}</span>
           </div>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .tile-wrapper {
+    .tile {
+      width: 85px;
+      height: 120px;
       perspective: 1000px;
-      width: 100px;
-      height: 140px;
-      margin: 0.5rem;
-      cursor: pointer;
+      cursor: default;
     }
-
-    .tile-wrapper.compact {
-      width: 40px;
-      height: 55px;
-      margin: 0.1rem;
+    .tile.compact {
+      width: 42px;
+      height: 58px;
     }
-
     .tile-inner {
       position: relative;
       width: 100%;
       height: 100%;
       text-align: center;
-      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.6s;
       transform-style: preserve-3d;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      background: white;
+      color: #333;
     }
 
-    .tile-inner.is-flipped {
-      transform: rotateY(180deg);
+    /* Danger zone pulsing glow */
+    .tile.danger .tile-inner {
+      box-shadow: 0 0 12px 3px rgba(255, 60, 60, 0.5);
+      border: 2px solid #ff4444;
+      animation: dangerPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes dangerPulse {
+      0%, 100% { box-shadow: 0 0 8px 2px rgba(255, 60, 60, 0.3); }
+      50% { box-shadow: 0 0 16px 5px rgba(255, 60, 60, 0.6); }
     }
 
     .tile-face {
       position: absolute;
       width: 100%;
       height: 100%;
-      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-      border-radius: 12px;
       display: flex;
       flex-direction: column;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      padding: 4px 2px;
       overflow: hidden;
     }
 
-    .tile-back {
-      background: linear-gradient(135deg, #1b2838 0%, #101824 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: rgba(255, 255, 255, 0.1);
-      font-size: 3rem;
-    }
-
-    .tile-front {
-      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-      transform: rotateY(180deg);
-      padding: 0.5rem;
-      justify-content: space-between;
-    }
-
-    .compact .tile-front {
-      padding: 2px;
-      justify-content: center;
-    }
-
-    .tile-header {
-      text-align: left;
-      height: 15px;
-    }
-
-    .tile-body {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    /* Tile name at top */
+    .tile-name {
+      font-size: 0.55rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      padding: 0 2px;
     }
 
     .tile-icon {
-      font-size: 3rem;
+      font-size: 2.25rem;
       line-height: 1;
-      color: #333;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      flex-shrink: 0;
     }
-
     .compact .tile-icon {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
-
-    .tile-footer {
+    .is-dragon { color: #d63031; }
+    .is-wind { color: #0984e3; }
+    
+    /* Rank badge for number tiles */
+    .tile-rank {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #555;
+      background: #f0f0f0;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
       text-align: center;
-      height: 15px;
+      position: absolute;
+      top: 3px;
+      right: 3px;
     }
 
-    .name {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: #666;
-      letter-spacing: -0.5px;
+    /* Value row at bottom */
+    .tile-value-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    .tile-value {
+      font-weight: bold;
+      font-size: 1.1rem;
+      background: #f1f2f6;
+      border-radius: 8px;
+      padding: 0 8px;
+    }
+    .compact .tile-value-row {
+      gap: 1px;
+    }
+    .compact .tile-value {
+      font-size: 0.7rem;
+      padding: 0 4px;
+    }
+    .tile-value.changed {
+      background: #fdf1d0;
+      color: #e58e26;
+      box-shadow: 0 0 5px rgba(229, 142, 38, 0.5);
+    }
+    .tile-value.danger-value {
+      background: #ffe0e0;
+      color: #d63031;
+      box-shadow: 0 0 5px rgba(214, 48, 49, 0.5);
     }
 
-    /* Color Classes */
-    .suit-bamboo { color: #2e7d32; }
-    .suit-circle { color: #1565c0; }
-    .suit-character { color: #c62828; }
-    .dragon-red { color: #c62828; }
-    .dragon-green { color: #2e7d32; }
+    /* Change indicators */
+    .change-indicator {
+      font-size: 0.6rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .compact .change-indicator {
+      font-size: 0.45rem;
+    }
+    .change-indicator.up {
+      color: #10ac84;
+    }
+    .change-indicator.down {
+      color: #ee5253;
+    }
   `]
 })
-export class TileComponent implements OnInit, OnChanges {
-  @Input() tile?: Tile | null;
+export class TileComponent implements OnChanges {
+  @Input({ required: true }) tile!: Tile;
   @Input() compact: boolean = false;
+  @Input() hideArrows: boolean = false;
   
-  isFlipped: boolean = false;
-  private cdr = inject(ChangeDetectorRef);
+  animationState = 'default';
+  
+  get hasValueChanged(): boolean {
+    return this.tile.currentValue !== this.tile.baseValue;
+  }
 
-  ngOnInit() {
-    this.triggerFlip();
+  get valueDelta(): number {
+    return this.tile.lastDelta || 0;
+  }
+
+  /** Tile is in the danger zone if its value is within 2 of a game-over threshold (0 or 10) */
+  get isDangerZone(): boolean {
+    if (this.tile.category === TileCategory.Number) return false;
+    return this.tile.currentValue <= 2 || this.tile.currentValue >= 8;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['tile'] && this.tile) {
-      if (!changes['tile'].firstChange) {
-        this.triggerFlip();
+    if (changes['tile'] && !changes['tile'].isFirstChange()) {
+      if (changes['tile'].previousValue?.id !== changes['tile'].currentValue?.id) {
+         this.animationState = 'flipped';
+         setTimeout(() => {
+            this.animationState = 'default';
+         }, 10);
       }
     }
-  }
-
-  private triggerFlip() {
-    this.isFlipped = false;
-    this.cdr.detectChanges();
-    
-    setTimeout(() => {
-      this.isFlipped = true;
-      this.cdr.detectChanges();
-    }, 150);
-  }
-
-  getSuitClass(): string {
-    if (!this.tile) return '';
-    return this.tile.category === TileCategory.Number 
-      ? `suit-${this.tile.suit?.toLowerCase()}` 
-      : `dragon-${this.tile.name?.toLowerCase().includes('red') ? 'red' : this.tile.name?.toLowerCase().includes('green') ? 'green' : ''}`;
   }
 }

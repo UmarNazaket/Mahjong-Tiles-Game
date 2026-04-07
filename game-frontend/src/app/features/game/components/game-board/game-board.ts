@@ -1,65 +1,63 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-// Stores
 import { GameStore } from '../../../../store/game/game.store';
 import { LeaderboardStore } from '../../../../store/leaderboard/leaderboard.store';
+import { BetType } from '../../../../core/enums/game.enums';
 
-// Enums
-import { GameStatus, BetType } from '../../../../core/enums/game.enums';
-
-// Components
+import { DeckStatus } from '../deck-status/deck-status';
 import { HandDisplay } from '../hand-display/hand-display';
 import { BettingControls } from '../betting-controls/betting-controls';
-import { DeckStatus } from '../deck-status/deck-status';
-import { MarketTracker } from '../market-tracker/market-tracker';
 import { HandHistory } from '../hand-history/hand-history';
 import { GameOver } from '../game-over/game-over';
+import { MarketTracker } from '../market-tracker/market-tracker';
 
 @Component({
   selector: 'app-game-board',
   standalone: true,
   imports: [
-    CommonModule, 
-    HandDisplay, 
-    BettingControls, 
-    DeckStatus, 
-    MarketTracker, 
-    HandHistory, 
-    GameOver
+    CommonModule,
+    DeckStatus,
+    HandDisplay,
+    BettingControls,
+    HandHistory,
+    GameOver,
+    MarketTracker
   ],
   template: `
-    <div class="board-layout">
-      <!-- Left Sidebar: Status & Market -->
-      <aside class="sidebar left-sidebar">
+    <div class="game-container">
+      
+      <!-- Top Section: Deck Status & Market -->
+      <div class="top-section">
         <app-market-tracker [tileValueMap]="gameStore.tileValueMap()"></app-market-tracker>
-        
-        <div class="spacer"></div>
         
         <app-deck-status 
           [drawCount]="gameStore.drawPileCount()"
           [discardCount]="gameStore.discardPileCount()"
           [reshuffleCount]="gameStore.reshuffleCount()">
         </app-deck-status>
-      </aside>
+      </div>
 
-      <!-- Center: Main Play Area -->
-      <main class="play-area">
-        <app-hand-display [hand]="gameStore.activeHand()"></app-hand-display>
-        
-        <app-betting-controls 
-          [disabled]="gameStore.isGameOver() || isResolving"
-          (bet)="onBet($event)">
-        </app-betting-controls>
-      </main>
+      <div class="main-play-area">
+        <!-- Center Section: Current Hand & Betting -->
+        <div class="center-stage">
+          <app-hand-display [hand]="gameStore.activeHand()"></app-hand-display>
+          
+          <div class="betting-area">
+             <app-betting-controls 
+                [disabled]="!gameStore.canBet()"
+                (bet)="onBet($event)">
+             </app-betting-controls>
+          </div>
+        </div>
 
-      <!-- Right Sidebar: History -->
-      <aside class="sidebar right-sidebar">
-        <app-hand-history [history]="gameStore.roundHistory()"></app-hand-history>
-      </aside>
+        <!-- Right Section: History -->
+        <div class="side-panel">
+          <app-hand-history [history]="gameStore.roundHistory()"></app-hand-history>
+        </div>
+      </div>
 
-      <!-- Full Screen Overlay -->
+      <!-- Game Over Modal Overlay -->
       <app-game-over 
         *ngIf="gameStore.isGameOver()"
         [score]="gameStore.score()"
@@ -68,63 +66,70 @@ import { GameOver } from '../game-over/game-over';
         (playAgain)="onPlayAgain()"
         (goHome)="onGoHome()">
       </app-game-over>
+
     </div>
   `,
   styles: [`
-    .board-layout {
-      display: grid;
-      grid-template-columns: 300px 1fr 350px;
-      gap: 2rem;
+    .game-container {
+      width: 100%;
       height: 100%;
-    }
-
-    .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      padding: 2rem;
+      gap: 2rem;
+      position: relative;
     }
-
-    .play-area {
+    .top-section {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 3rem;
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 3rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
     }
-
-    .spacer {
+    .main-play-area {
+      display: flex;
       flex: 1;
+      gap: 2rem;
+      min-height: 0; /* Important for scrollable children */
+    }
+    .center-stage {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+    }
+    .side-panel {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+    }
+    .betting-area {
+      margin-top: 1rem;
     }
 
-    @media (max-width: 1200px) {
-      .board-layout {
-        grid-template-columns: 250px 1fr 250px;
+    @media (max-width: 1024px) {
+      .main-play-area {
+        flex-direction: column;
       }
-    }
-
-    @media (max-width: 900px) {
-      .board-layout {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+      .side-panel {
+        flex: none;
+        height: 300px;
+        max-width: 100%;
       }
     }
   `]
 })
 export class GameBoard implements OnInit {
-  readonly gameStore = inject(GameStore);
-  readonly leaderboardStore = inject(LeaderboardStore);
-  readonly router = inject(Router);
-
-  get isResolving(): boolean {
-    return this.gameStore.status() !== GameStatus.Playing;
-  }
+  gameStore = inject(GameStore);
+  leaderboardStore = inject(LeaderboardStore);
+  private router = inject(Router);
 
   ngOnInit() {
-    this.gameStore.startNewGame();
+    // If we land here and game isn't playing, start one
+    if (!this.gameStore.canBet() && !this.gameStore.isGameOver()) {
+      this.gameStore.startNewGame();
+    }
   }
 
   onBet(betType: BetType) {
@@ -138,7 +143,6 @@ export class GameBoard implements OnInit {
       date: new Date().toISOString(),
       roundsPlayed: this.gameStore.roundHistory().length
     });
-    this.router.navigate(['/']);
   }
 
   onPlayAgain() {
@@ -146,6 +150,7 @@ export class GameBoard implements OnInit {
   }
 
   onGoHome() {
+    this.gameStore.resetGame();
     this.router.navigate(['/']);
   }
 }

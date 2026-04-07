@@ -11,28 +11,27 @@ import { slideIn } from '../../../../shared/animations/game.animations';
   animations: [slideIn],
   template: `
     <div class="history-container">
-      <h3 class="history-title">ROUND HISTORY</h3>
+      <h3 class="history-title">Round History</h3>
+      
+      <div *ngIf="history.length === 0" class="empty-state">
+        No hands played yet.
+      </div>
+
       <div class="history-list">
-        <div *ngIf="history.length === 0" class="empty-state">
-          No rounds played yet.
-        </div>
-        
-        <div class="history-item" *ngFor="let round of history; let i = index" [@slideIn]>
-          <div class="result-badge" [class.won]="round.won" [class.lost]="!round.won">
-            <span class="badge-text">{{ round.won ? 'WIN' : 'LOSS' }}</span>
+        <div class="history-item" *ngFor="let result of history; let i = index" [@slideIn]>
+          <div class="item-header">
+            <span class="round-num">Round {{ history.length - i }}</span>
+            <div class="result-badge" [class.won]="result.won" [class.lost]="!result.won">
+              {{ result.won ? 'Won' : 'Lost' }} ({{ result.betType }})
+            </div>
           </div>
           
-          <div class="hand-details">
-            <div class="tiles-mini">
-              @for (tile of round.hand.tiles; track tile.id) {
-                <app-tile [tile]="tile" [compact]="true"></app-tile>
-              }
-            </div>
-            <div class="round-stats">
-              <span class="stat">Bet: <strong>{{ round.betType }}</strong></span>
-              <span class="divider">•</span>
-              <span class="stat">New Value: <strong>{{ round.currentHandValue }}</strong></span>
-            </div>
+          <div class="tiles-mini">
+            <app-tile *ngFor="let tile of result.hand.tiles" [tile]="tile" [compact]="true" [hideArrows]="true"></app-tile>
+          </div>
+          
+          <div class="item-footer">
+            Value: <strong>{{ result.currentHandValue }}</strong>
           </div>
         </div>
       </div>
@@ -40,100 +39,85 @@ import { slideIn } from '../../../../shared/animations/game.animations';
   `,
   styles: [`
     .history-container {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      max-height: 400px;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
-    }
-    
-    .history-title {
-      margin: 0 0 1rem 0;
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: rgba(255, 255, 255, 0.6);
-      text-align: center;
-    }
-
-    .history-list {
-      overflow-y: auto;
-      padding-right: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    /* Custom Scrollbar */
-    .history-list::-webkit-scrollbar { width: 4px; }
-    .history-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
-
-    .empty-state {
-      text-align: center;
-      padding: 2rem;
-      color: rgba(255, 255, 255, 0.3);
-      font-style: italic;
-    }
-
-    .history-item {
-      display: flex;
-      gap: 1rem;
       background: rgba(0, 0, 0, 0.2);
-      padding: 0.8rem;
-      border-radius: 12px;
+      border-radius: 16px;
+      overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .result-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 4px; /* We act as a colored side-border mostly, but with text for now */
-      padding: 0 0.8rem;
-      border-radius: 6px;
+    .history-title {
+      padding: 1.5rem;
+      margin: 0;
+      font-size: 1.25rem;
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
     }
-
-    .result-badge.won { background: rgba(0, 210, 255, 0.15); color: #00d2ff; }
-    .result-badge.lost { background: rgba(255, 59, 48, 0.15); color: #ff3b30; }
-
-    .badge-text {
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 1px;
+    .empty-state {
+      padding: 2rem;
+      text-align: center;
+      color: #777;
+      font-style: italic;
     }
-
-    .hand-details {
+    .history-list {
       flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 1rem;
     }
-
+    .history-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 1rem;
+      border-left: 4px solid #555;
+    }
+    .history-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .round-num {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    .result-badge {
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .result-badge.won {
+      background: rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+    .result-badge.lost {
+      background: rgba(238, 82, 83, 0.2);
+      color: #ee5253;
+    }
     .tiles-mini {
       display: flex;
-      gap: 4px;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
     }
-
-    .round-stats {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.5);
+    .item-footer {
+      text-align: right;
+      font-size: 0.9rem;
+      color: #ccc;
     }
-
-    .round-stats strong {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .divider {
-      color: rgba(255, 255, 255, 0.2);
+    .item-footer strong {
+      color: #fff;
+      font-size: 1.1rem;
     }
   `]
 })

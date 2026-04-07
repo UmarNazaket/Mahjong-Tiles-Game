@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { popIn } from '../../animations/game.animations';
 
@@ -8,39 +8,33 @@ import { popIn } from '../../animations/game.animations';
   imports: [CommonModule],
   animations: [popIn],
   template: `
-    <div class="score-container" [@popIn]="score">
-      <span class="label">SCORE</span>
-      <span class="value">{{ score }}</span>
+    <div class="score-container" [@popIn]="animationState">
+      {{ score }}
     </div>
   `,
   styles: [`
     .score-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.5rem 1.5rem;
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-bottom: 2px;
-    }
-    .value {
-      font-size: 1.8rem;
       font-weight: 800;
-      color: #00d2ff;
-      text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-      font-family: 'Outfit', sans-serif;
+      color: #4cd137;
+      background: rgba(76, 209, 55, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 8px;
+      min-width: 3rem;
+      text-align: center;
+      border: 1px solid rgba(76, 209, 55, 0.3);
     }
   `]
 })
-export class ScoreDisplay {
+export class ScoreDisplay implements OnChanges {
   @Input() score: number = 0;
+  animationState: number = 0;
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['score'] && !changes['score'].isFirstChange()) {
+      if (changes['score'].currentValue !== changes['score'].previousValue) {
+        // Increment state to trigger animation
+        this.animationState++;
+      }
+    }
+  }
 }

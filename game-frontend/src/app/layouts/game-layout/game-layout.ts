@@ -1,34 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Header } from '../../shared/components/header/header';
+import { GameStore } from '../../store/game/game.store';
 
 @Component({
   selector: 'app-game-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Header],
+  imports: [CommonModule, RouterModule, Header],
   template: `
-    <div class="layout-wrapper">
-      <app-header></app-header>
-      <main class="content-area">
+    <div class="layout-container">
+      <app-header 
+        *ngIf="isGameRoute" 
+        [score]="gameStore.score()"
+        (exitClicked)="onExit()">
+      </app-header>
+      
+      <main class="main-content" [class.no-header]="!isGameRoute">
         <router-outlet></router-outlet>
       </main>
     </div>
   `,
   styles: [`
-    .layout-wrapper {
-      min-height: 100vh;
+    .layout-container {
       display: flex;
       flex-direction: column;
-      background: radial-gradient(circle at top, #1e1e1e 0%, #0d0d0d 100%);
+      height: 100vh;
+      background-color: #0f0f13;
+      overflow: hidden;
+      color: white;
+      font-family: 'Inter', 'Outfit', sans-serif;
     }
-    .content-area {
+    .main-content {
       flex: 1;
-      padding: 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
+      overflow-y: auto;
+      position: relative;
+    }
+    .no-header {
+      height: 100vh;
     }
   `]
 })
-export class GameLayout {}
+export class GameLayout {
+  private router = inject(Router);
+  gameStore = inject(GameStore);
+
+  get isGameRoute(): boolean {
+    return this.router.url.includes('/game');
+  }
+
+  onExit() {
+    this.gameStore.resetGame();
+    this.router.navigate(['/']);
+  }
+}

@@ -1,7 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { GameStore } from '../../../store/game/game.store';
 import { ScoreDisplay } from '../score-display/score-display';
 
 @Component({
@@ -10,16 +8,14 @@ import { ScoreDisplay } from '../score-display/score-display';
   imports: [CommonModule, ScoreDisplay],
   template: `
     <header class="game-header">
-      <div class="logo-section" (click)="exitGame()">
-        <span class="exit-btn">
-          <i class="exit-icon">←</i>
-          EXIT
-        </span>
+      <div class="logo">Mahjong Hand Betting</div>
+      
+      <div class="score-section">
+        <span class="label">Score:</span>
+        <app-score-display [score]="score"></app-score-display>
       </div>
-
-      <div class="stats-section">
-        <app-score-display [score]="store.score()"></app-score-display>
-      </div>
+      
+      <button class="exit-btn" (click)="exitClicked.emit()">Exit Game</button>
     </header>
   `,
   styles: [`
@@ -28,48 +24,43 @@ import { ScoreDisplay } from '../score-display/score-display';
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      background: rgba(13, 13, 13, 0.8);
-      backdrop-filter: blur(15px);
+      background: rgba(20, 20, 30, 0.8);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 80px;
+      color: white;
     }
-
-    .exit-btn {
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #e0e0e0;
+      letter-spacing: 1px;
+    }
+    .score-section {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: rgba(255, 255, 255, 0.6);
-      font-weight: 600;
-      font-size: 0.85rem;
+      gap: 1rem;
+      font-size: 1.25rem;
+    }
+    .label {
+      color: #aaa;
+    }
+    .exit-btn {
+      background: rgba(255, 60, 60, 0.2);
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      font-weight: bold;
+      transition: all 0.2s ease;
     }
-
     .exit-btn:hover {
-      background: rgba(255, 59, 48, 0.1);
-      border-color: rgba(255, 59, 48, 0.3);
-      color: #ff3b30;
-      transform: translateX(-5px);
-    }
-
-    .exit-icon {
-      font-style: normal;
-      font-size: 1.2rem;
+      background: rgba(255, 60, 60, 0.4);
+      transform: translateY(-1px);
     }
   `]
 })
 export class Header {
-  readonly store = inject(GameStore);
-  private router = inject(Router);
-
-  exitGame() {
-    this.router.navigate(['/']);
-  }
+  @Input() score: number = 0;
+  @Output() exitClicked = new EventEmitter<void>();
 }

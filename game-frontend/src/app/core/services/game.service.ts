@@ -1,10 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Inject } from '@angular/core';
 import { DeckService } from './deck.service';
 import { ScoringService } from './scoring.service';
-import { GAME_CONFIG } from '../config/game.config';
+import { GAME_CONFIG, GameConfig } from '../config/game.config';
 import { GameState } from '../../store/game/game.models';
-import { GameStatus, BetType } from '../enums/game.enums';
+import { GameStatus, BetType, TileCategory } from '../enums/game.enums';
 import { Hand, RoundResult } from '../models/game.model';
+import { Tile } from '../models/tile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +18,18 @@ export class GameService {
   initializeGame(): GameState {
     const fullDeck = this.deckService.generateFullDeck();
     const shuffledDeck = this.deckService.shuffle(fullDeck);
-    
+
     // Draw initial hand
     const { hand, remaining } = this.deckService.drawHand(shuffledDeck);
-    
+
     // Initialize tile value map
     const tileValueMap = new Map<string, number>();
 
+    const syncedHand = this.scoringService.syncTileValues(hand, tileValueMap);
+
     const activeHand: Hand = {
-      tiles: hand,
-      totalValue: this.scoringService.calculateHandValue(hand, tileValueMap)
+      tiles: syncedHand,
+      totalValue: this.scoringService.calculateHandValue(syncedHand, tileValueMap)
     };
 
     return {
@@ -45,7 +48,7 @@ export class GameService {
 
   processBet(currentState: GameState, betType: BetType): GameState {
     if (currentState.status !== GameStatus.Playing || !currentState.activeHand) {
-      return currentState;
+      return currentState; // Should not happen
     }
 
     const previousHand = currentState.activeHand;
@@ -60,36 +63,47 @@ export class GameService {
       reshuffleCount++;
     }
 
-    const { hand: newTiles, remaining } = this.deckService.drawHand(newDrawPile);
+    const { hand: rawDrawnTiles, remaining } = this.deckService.drawHand(newDrawPile);
     newDrawPile = remaining;
 
-    // Calculate value based on CURRENT market map
+    // SYNC drawn tiles with current market prices BEFORE calculating win/loss
+    const newTiles = this.scoringService.syncTileValues(rawDrawnTiles, currentState.tileValueMap);
+
     const currentHandValue = this.scoringService.calculateHandValue(newTiles, currentState.tileValueMap);
-    
-    const won = this.scoringService.evaluateBet(previousHand.totalValue, currentHandValue, betType);
-    
-    // Update market prices based on win/loss
-    const newTileValueMap = this.scoringService.updateMarketValues(newTiles, won, currentState.tileValueMap);
-    
-    // Re-sync tile objects with new market prices for the UI
-    const syncedHandTiles = this.scoringService.syncTileValues(newTiles, newTileValueMap);
-    
     const newHand: Hand = {
-      tiles: syncedHandTiles,
-      totalValue: this.scoringService.calculateHandValue(syncedHandTiles, newTileValueMap)
+      tiles: newTiles,
+      totalValue: currentHandValue
     };
+
+    const won = this.scoringService.evaluateBet(previousHand.totalValue, currentHandValue, betType);
 
     const roundResult: RoundResult = {
       hand: previousHand,
       betType,
       won,
       previousHandValue: previousHand.totalValue,
-      currentHandValue: newHand.totalValue
+      currentHandValue
     };
 
     const newScore = won ? currentState.score + 1 : currentState.score;
+
+    const newTileValueMap = this.scoringService.applyDynamicScaling(newTiles, won, currentState.tileValueMap);
+
+    // SYNC tiles one last time with the NEW scaled prices for the next round
+    const finalHandTiles = newTiles.map(tile => {
+      if (tile.category === TileCategory.Number) return tile;
+      const newVal = newTileValueMap.get(tile.name) ?? tile.currentValue;
+      return {
+        ...tile,
+        currentValue: newVal,
+        lastDelta: newVal - tile.currentValue
+      };
+    });
+    newHand.tiles = finalHandTiles;
+    newHand.totalValue = this.scoringService.calculateHandValue(finalHandTiles, newTileValueMap);
+
     const gameOverCheck = this.scoringService.checkGameOver(newTileValueMap, reshuffleCount);
-    
+
     return {
       status: gameOverCheck.isOver ? GameStatus.GameOver : GameStatus.Playing,
       drawPile: newDrawPile,

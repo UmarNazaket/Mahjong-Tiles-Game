@@ -1,148 +1,142 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LeaderboardStore } from '../../../../store/leaderboard/leaderboard.store';
 import { LeaderboardComponent } from '../leaderboard/leaderboard';
-import { fadeInOut, popIn } from '../../../../shared/animations/game.animations';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
   imports: [CommonModule, LeaderboardComponent],
-  animations: [fadeInOut, popIn],
   template: `
-    <div class="landing-container" [@fadeInOut]>
-      
-      <div class="hero-section" [@popIn]>
+    <div class="landing-container">
+      <div class="hero-section">
         <div class="title-wrapper">
-          <h1 class="main-title">MAHJONG</h1>
-          <h2 class="sub-title">MARKET BETTER</h2>
+          <div class="tiles-deco">
+            <span>🀄</span>
+            <span>🀅</span>
+            <span>🀀</span>
+          </div>
+          <h1 class="main-title">Mahjong<br><span class="accent">Hand Betting</span></h1>
+          <p class="subtitle">Will the next hand score higher or lower? Trust your instincts.</p>
         </div>
         
-        <p class="description">
-          A high-stakes fusion of traditional Mahjong mechanics and volatile market trading. Predict the value swings, ride the dragons, and build your fortune.
-        </p>
-        
         <button class="play-btn" (click)="startGame()">
-          <span class="btn-text">PLAY NOW</span>
-          <span class="btn-icon">→</span>
+          <span class="icon">▶️</span>
+          Start New Game
         </button>
       </div>
 
       <div class="leaderboard-section">
-        <app-leaderboard></app-leaderboard>
+        <app-leaderboard [entries]="leaderboardStore.entries()"></app-leaderboard>
       </div>
-
     </div>
   `,
   styles: [`
     .landing-container {
-      min-height: 100vh;
+      width: 100%;
+      height: 100vh;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 5rem;
-      padding: 4rem;
-      background: radial-gradient(circle at 30% 50%, #1a2a6c 0%, #112a46 40%, #0d0d0d 100%);
+      background: linear-gradient(135deg, #0f0f13 0%, #1a1a24 100%);
+      color: white;
+      padding: 2rem;
+      gap: 4rem;
     }
-
-    @media (max-width: 1024px) {
-      .landing-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 3rem;
-        padding: 2rem;
-      }
-    }
-
     .hero-section {
+      flex: 1;
       max-width: 500px;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 3rem;
+    }
+    .leaderboard-section {
+      flex: 1;
+      max-width: 450px;
     }
     
-    @media (max-width: 1024px) {
-      .hero-section {
-        align-items: center;
-      }
-    }
-
     .title-wrapper {
+      position: relative;
+    }
+    .tiles-deco {
+      font-size: 3rem;
+      margin-bottom: 1rem;
       display: flex;
-      flex-direction: column;
-      line-height: 1;
+      gap: 0.5rem;
+      opacity: 0.8;
     }
-
     .main-title {
-      font-size: 5rem;
+      font-size: 3.5rem;
       font-weight: 900;
-      color: white;
-      margin: 0;
-      letter-spacing: 5px;
-      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      line-height: 1.1;
+      margin: 0 0 1rem 0;
+      letter-spacing: -1px;
     }
-
-    .sub-title {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #00d2ff;
-      margin: 0;
-      letter-spacing: 8px;
-      background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+    .accent {
+      color: #3498db;
+      background: -webkit-linear-gradient(45deg, #3498db, #9b59b6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    .description {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: rgba(255, 255, 255, 0.7);
+    .subtitle {
+      font-size: 1.2rem;
+      color: #aaa;
+      line-height: 1.5;
       margin: 0;
+      max-width: 80%;
     }
-
+    
     .play-btn {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-      border: none;
-      border-radius: 50px;
-      padding: 1.2rem 3rem;
+      background: linear-gradient(135deg, #3498db, #2980b9);
       color: white;
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 2px;
+      border: none;
+      padding: 1.25rem 2rem;
+      border-radius: 50px;
+      font-size: 1.3rem;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0, 210, 255, 0.3);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      transition: all 0.2s;
       width: fit-content;
     }
-
     .play-btn:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 15px 40px rgba(0, 210, 255, 0.5);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 25px rgba(52, 152, 219, 0.4);
     }
-
-    .btn-icon {
-      transition: transform 0.3s ease;
+    .play-btn:active {
+      transform: translateY(1px);
     }
-
-    .play-btn:hover .btn-icon {
-      transform: translateX(5px);
-    }
-
-    .leaderboard-section {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      width: 100%;
+    
+    @media (max-width: 900px) {
+      .landing-container {
+        flex-direction: column;
+        padding: 2rem 1rem;
+        height: auto;
+        min-height: 100vh;
+      }
+      .hero-section {
+        text-align: center;
+        align-items: center;
+      }
+      .subtitle {
+        max-width: 100%;
+      }
     }
   `]
 })
-export class LandingPage {
-  constructor(private router: Router) {}
+export class LandingPage implements OnInit {
+  leaderboardStore = inject(LeaderboardStore);
+  private router = inject(Router);
+
+  ngOnInit() {
+    this.leaderboardStore.loadScores();
+  }
 
   startGame() {
     this.router.navigate(['/game']);

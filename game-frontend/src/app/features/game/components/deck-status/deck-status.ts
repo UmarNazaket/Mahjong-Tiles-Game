@@ -7,56 +7,55 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="deck-status-container">
-      <div class="stat-box">
-        <span class="label">DRAW PILE</span>
-        <span class="value">{{ drawCount }}</span>
+      <div class="stat-card">
+        <div class="stat-value">{{ drawCount }}</div>
+        <div class="stat-label">Draw Pile</div>
       </div>
-      <div class="divider"></div>
-      <div class="stat-box">
-        <span class="label">DISCARD PILE</span>
-        <span class="value">{{ discardCount }}</span>
+      <div class="stat-card">
+        <div class="stat-value">{{ discardCount }}</div>
+        <div class="stat-label">Discard Pile</div>
       </div>
-      <div class="divider"></div>
-      <div class="stat-box">
-        <span class="label">RESHUFFLES</span>
-        <span class="value">{{ reshuffleCount }} / 3</span>
+      <div class="stat-card reshuffle-card">
+        <div class="stat-value">{{ reshuffleCount }} / 3</div>
+        <div class="stat-label">Reshuffles</div>
       </div>
     </div>
   `,
   styles: [`
     .deck-status-container {
-      display: inline-flex;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 0.5rem 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
     }
-    .stat-box {
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0.5rem 1rem;
+      min-width: 100px;
+      backdrop-filter: blur(5px);
     }
-    .divider {
-      width: 1px;
-      background: rgba(255, 255, 255, 0.1);
-      margin: 0.5rem 0;
+    .reshuffle-card {
+      background: rgba(253, 203, 110, 0.1);
+      border-color: rgba(253, 203, 110, 0.3);
     }
-    .label {
-      font-size: 0.6rem;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 1px;
-      margin-bottom: 4px;
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+    }
+    .reshuffle-card .stat-value {
+      color: #fdcb6e;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: #aaa;
       text-transform: uppercase;
-    }
-    .value {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: white;
-      font-family: 'Outfit', sans-serif;
+      letter-spacing: 1px;
+      margin-top: 0.5rem;
     }
   `]
 })
