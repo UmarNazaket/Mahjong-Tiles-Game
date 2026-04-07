@@ -79,14 +79,14 @@ import { LeaderboardStore } from '../../../../store/leaderboard/leaderboard.stor
   `,
   styles: [`
     .game-over-overlay {
-      position: absolute;
+      position: fixed; /* Use fixed instead of absolute to cover the entire screen including header */
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
+      z-index: 9999; /* Higher than header's z-index 50 */
     }
     .game-over-modal {
       background: var(--bg-card);
