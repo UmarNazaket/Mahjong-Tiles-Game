@@ -1,4 +1,14 @@
-/* Global Styles */
+:root {
+    --primary-color: #6ec1e4;
+    --secondary-color: #94a3b8;
+    --text-color: #f8fafc;
+    --accent-color: #ffb300;
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --white: #ffffff;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
 
 * {
     box-sizing: border-box;
@@ -12,9 +22,10 @@ body {
     font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    color: #ffffff;
-    background: #0f0f13;
-    /* Dark premium background */
+    color: var(--text-color);
+    background-color: var(--bg-dark);
+    background-image: radial-gradient(circle at 2px 2px, rgba(110, 193, 228, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -36,12 +47,14 @@ p {
 }
 
 a {
-    color: #667eea;
+    color: var(--primary-color);
     text-decoration: none;
+    transition: color 0.15s ease-in-out;
 }
 
 a:hover {
-    text-decoration: underline;
+    color: var(--accent-color);
+    text-decoration: none;
 }
 
 /* Buttons */
@@ -63,16 +76,17 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-    background: #1a1a24;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #3a3a4a;
-    border-radius: 4px;
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    transition: background 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: rgba(148, 163, 184, 0.4);
 }
 
 /* Utilities */

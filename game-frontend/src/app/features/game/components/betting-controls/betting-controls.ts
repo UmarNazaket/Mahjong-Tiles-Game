@@ -30,10 +30,12 @@ import { BetType } from '../../../../core/enums/game.enums';
       padding: 1.5rem;
     }
     h3 {
-      color: white;
+      color: rgba(255, 255, 255, 0.6);
       margin: 0;
-      font-weight: 500;
+      font-weight: 700;
       letter-spacing: 1px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
     }
     .buttons {
       display: flex;
@@ -42,38 +44,53 @@ import { BetType } from '../../../../core/enums/game.enums';
     .btn {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.75rem;
-      padding: 1rem 2.5rem;
+      padding: 1rem 3rem;
       border: none;
-      border-radius: 50px;
-      font-size: 1.25rem;
-      font-weight: bold;
+      border-radius: 16px;
+      font-size: 1.15rem;
+      font-weight: 800;
       color: white;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      background: #2f3542;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn:hover::after {
+      opacity: 1;
     }
     .btn:disabled {
-      opacity: 0.5;
+      opacity: 0.3;
       cursor: not-allowed;
       transform: none !important;
+      filter: grayscale(1);
     }
     .btn:hover:not(:disabled) {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
     .btn:active:not(:disabled) {
-      transform: translateY(2px) scale(0.95);
+      transform: translateY(-1px);
     }
     .higher-btn {
-      background: linear-gradient(135deg, #10ac84, #1dd1a1);
+      background: linear-gradient(135deg, var(--primary-color), #4FA8CC);
+      box-shadow: 0 8px 20px rgba(110, 193, 228, 0.3);
     }
     .lower-btn {
-      background: linear-gradient(135deg, #ee5253, #ff6b6b);
+      background: linear-gradient(135deg, #6B778C, #4A5568);
+      box-shadow: 0 8px 20px rgba(107, 119, 140, 0.2);
     }
     .icon {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
   `]
 })

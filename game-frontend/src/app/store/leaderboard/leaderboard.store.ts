@@ -16,6 +16,16 @@ export const LeaderboardStore = signalStore(
       const entries = leaderboardService.saveScore(entry);
       patchState(state, { entries });
     },
+    getRank(score: number, roundsPlayed: number): number {
+      const entries = leaderboardService.getTopScores();
+      // Find where this result would land.
+      // 1. Current score > entry score
+      // 2. Current score == entry score AND current rounds >= entry rounds (pro-user tie-breaker)
+      const rank = entries.findIndex(e => 
+        score > e.score || (score === e.score && roundsPlayed >= e.roundsPlayed)
+      );
+      return rank === -1 ? entries.length + 1 : rank + 1;
+    },
     clearScores() {
       leaderboardService.clearScores();
       patchState(state, { entries: [] });

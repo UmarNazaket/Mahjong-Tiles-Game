@@ -40,8 +40,8 @@ import { LeaderboardComponent } from '../leaderboard/leaderboard';
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0f0f13 0%, #1a1a24 100%);
-      color: white;
+      background: radial-gradient(circle at top right, #1e293b, #0f172a);
+      color: var(--text-color);
       padding: 2rem;
       gap: 4rem;
     }
@@ -68,24 +68,26 @@ import { LeaderboardComponent } from '../leaderboard/leaderboard';
       opacity: 0.8;
     }
     .main-title {
-      font-size: 3.5rem;
+      font-size: 4rem;
       font-weight: 900;
-      line-height: 1.1;
-      margin: 0 0 1rem 0;
-      letter-spacing: -1px;
+      line-height: 1;
+      margin: 0 0 1.5rem 0;
+      letter-spacing: -3px;
+      color: var(--text-color);
     }
     .accent {
-      color: #3498db;
-      background: -webkit-linear-gradient(45deg, #3498db, #9b59b6);
+      color: var(--primary-color);
+      display: block;
+      background: linear-gradient(to right, var(--primary-color), #a5f3fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .subtitle {
-      font-size: 1.2rem;
-      color: #aaa;
-      line-height: 1.5;
+      font-size: 1.15rem;
+      color: var(--secondary-color);
+      line-height: 1.6;
       margin: 0;
-      max-width: 80%;
+      max-width: 90%;
     }
     
     .play-btn {
@@ -93,21 +95,23 @@ import { LeaderboardComponent } from '../leaderboard/leaderboard';
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      background: linear-gradient(135deg, #3498db, #2980b9);
+      background: linear-gradient(135deg, var(--primary-color), #4FA8CC);
       color: white;
       border: none;
-      padding: 1.25rem 2rem;
-      border-radius: 50px;
-      font-size: 1.3rem;
-      font-weight: bold;
+      padding: 1.25rem 3rem;
+      border-radius: 16px;
+      font-size: 1.35rem;
+      font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
-      transition: all 0.2s;
+      box-shadow: 0 10px 25px rgba(110, 193, 228, 0.3);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .play-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 15px 25px rgba(52, 152, 219, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(110, 193, 228, 0.4);
     }
     .play-btn:active {
       transform: translateY(1px);

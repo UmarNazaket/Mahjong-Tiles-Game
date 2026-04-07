@@ -18,49 +18,73 @@ import { slideIn } from '../../../../shared/animations/game.animations';
       </div>
 
       <div class="history-list">
-        <div class="history-item" *ngFor="let result of history; let i = index" [@slideIn]>
+        <div class="history-item" 
+             *ngFor="let result of history; let i = index" 
+             [class.won]="result.won" 
+             [class.lost]="!result.won"
+             [@slideIn]>
           <div class="item-header">
             <span class="round-num">Round {{ history.length - i }}</span>
-            <div class="result-badge" [class.won]="result.won" [class.lost]="!result.won">
-              {{ result.won ? 'Won' : 'Lost' }} ({{ result.betType }})
+            <div class="result-box">
+              <span class="hand-val-badge">Value: {{ result.currentHandValue }}</span>
+              <div class="result-badge" [class.won]="result.won" [class.lost]="!result.won">
+                {{ result.won ? 'Won' : 'Lost' }} ({{ result.betType }})
+              </div>
             </div>
           </div>
           
           <div class="tiles-mini">
-            <app-tile *ngFor="let tile of result.hand.tiles" [tile]="tile" [compact]="true" [hideArrows]="true"></app-tile>
-          </div>
-          
-          <div class="item-footer">
-            Value: <strong>{{ result.currentHandValue }}</strong>
+            <app-tile *ngFor="let tile of result.hand.tiles" [tile]="tile" [compact]="true" [hideArrows]="true" [showHighlight]="false"></app-tile>
           </div>
         </div>
       </div>
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      height: 92%;
+      overflow: hidden;
+    }
     .history-container {
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: column;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 16px;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
     }
     .history-title {
       padding: 1.5rem;
       margin: 0;
-      font-size: 1.25rem;
-      color: #fff;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.3);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-color);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .history-title::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 16px;
+      background: var(--primary-color);
+      border-radius: 2px;
     }
     .empty-state {
-      padding: 2rem;
+      padding: 4rem 2rem;
       text-align: center;
-      color: #777;
+      color: var(--secondary-color);
       font-style: italic;
+      font-size: 0.9rem;
     }
     .history-list {
       flex: 1;
@@ -68,16 +92,25 @@ import { slideIn } from '../../../../shared/animations/game.animations';
       padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.75rem;
     }
     .history-item {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(15, 23, 42, 0.4);
       border-radius: 12px;
       padding: 1rem;
-      border-left: 4px solid #555;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 3px solid var(--secondary-color);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .history-item.won {
+      border-left-color: #10ac84;
+    }
+    .history-item.lost {
+      border-left-color: #ee5253;
     }
     .history-item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.6);
+      transform: translateX(4px);
     }
     .item-header {
       display: flex;
@@ -86,38 +119,47 @@ import { slideIn } from '../../../../shared/animations/game.animations';
       margin-bottom: 0.75rem;
     }
     .round-num {
-      color: #aaa;
-      font-size: 0.9rem;
+      color: var(--secondary-color);
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .result-badge {
-      font-size: 0.75rem;
-      font-weight: bold;
+    .result-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hand-val-badge {
+      font-size: 0.6rem;
+      font-weight: 900;
+      background: rgba(255, 179, 0, 0.1);
+      color: var(--accent-color);
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .result-badge {
+      font-size: 0.55rem;
+      font-weight: 900;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .result-badge.won {
-      background: rgba(16, 172, 132, 0.2);
+      background: rgba(16, 172, 132, 0.15);
       color: #10ac84;
     }
     .result-badge.lost {
-      background: rgba(238, 82, 83, 0.2);
+      background: rgba(238, 82, 83, 0.15);
       color: #ee5253;
     }
     .tiles-mini {
       display: flex;
-      gap: 0.25rem;
+      gap: 0.35rem;
       flex-wrap: wrap;
-      margin-bottom: 0.75rem;
-    }
-    .item-footer {
-      text-align: right;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    .item-footer strong {
-      color: #fff;
-      font-size: 1.1rem;
     }
   `]
 })
