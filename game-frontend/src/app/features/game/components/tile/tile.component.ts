@@ -54,6 +54,14 @@ import { TileIconPipe } from '../../../../shared/pipes/tile-icon.pipe';
         </div>
 
       </div>
+
+      <!-- Tooltip: only for Dragon/Wind tiles, hidden in compact mode -->
+      <div class="tile-tooltip" *ngIf="tooltipText && !compact">
+        <div class="tooltip-arrow"></div>
+        <div class="tooltip-label">Market Value</div>
+        <div class="tooltip-formula">{{ tooltipText }}</div>
+        <div class="tooltip-hint" *ngIf="isDangerZone">⚠️ Extreme zone!</div>
+      </div>
     </div>
   `,
   styles: [`
@@ -252,6 +260,82 @@ import { TileIconPipe } from '../../../../shared/pipes/tile-icon.pipe';
     .compact .change-indicator { font-size: 0.4rem; }
     .change-indicator.up   { color: #10ac84; }
     .change-indicator.down { color: #ee5253; }
+
+    /* ── Tooltip ── */
+    .tile {
+      position: relative; /* tooltip positioned relative to tile */
+    }
+
+    .tile-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 18, 35, 0.97);
+      border: 1px solid rgba(255, 179, 0, 0.3);
+      border-radius: 10px;
+      padding: 0.5rem 0.75rem;
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-50%) translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    /* Show tooltip on tile hover */
+    .tile:hover .tile-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Downward pointing arrow */
+    .tooltip-arrow {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid rgba(255, 179, 0, 0.35);
+    }
+    .tooltip-arrow::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: -5px;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid rgba(10, 18, 35, 0.97);
+    }
+
+    .tooltip-label {
+      font-size: 0.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #FFB300;
+      margin-bottom: 0.2rem;
+    }
+
+    .tooltip-formula {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tooltip-hint {
+      font-size: 0.6rem;
+      color: #ee5253;
+      margin-top: 0.2rem;
+      font-weight: 700;
+    }
   `]
 })
 export class TileComponent implements OnInit, OnChanges {
@@ -285,6 +369,22 @@ export class TileComponent implements OnInit, OnChanges {
     const isSpecial = this.tile.category === 'WIND' || this.tile.category === 'DRAGON';
     const isExtreme = this.tile.currentValue <= 2 || this.tile.currentValue >= 8;
     return isSpecial && isExtreme;
+  }
+
+  /**
+   * Tooltip formula text shown on hover for Dragon/Wind tiles.
+   * E.g. "Base 5 + 4 = Value 9"  or  "Base 5 − 2 = Value 3"  or  "Base 5, at start"
+   */
+  get tooltipText(): string | null {
+    const isSpecial = this.tile.category === 'WIND' || this.tile.category === 'DRAGON';
+    if (!isSpecial) return null;
+
+    const delta = this.tile.currentValue - this.tile.baseValue;
+    if (delta === 0) {
+      return `Base ${this.tile.baseValue} — unchanged`;
+    }
+    const sign = delta > 0 ? '+' : '−';
+    return `Base ${this.tile.baseValue} ${sign} ${Math.abs(delta)} = Value ${this.tile.currentValue}`;
   }
 
   /**
