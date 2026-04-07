@@ -1,11 +1,10 @@
 // Shared Components
-// export * from './components/...';
+export * from './components/header/header';
+export * from './components/score-display/score-display';
 
 // Shared Pipes
-// export * from './pipes/...';
-
-// Shared Directives
-// export * from './directives/...';
+export * from './pipes/tile-icon.pipe';
 
 // Shared Animations
-// export * from './animations/...';
+export * from './animations/game.animations';
+
