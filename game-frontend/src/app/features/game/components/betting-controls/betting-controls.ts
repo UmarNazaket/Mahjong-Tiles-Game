@@ -86,7 +86,7 @@ import { BetType } from '../../../../core/enums/game.enums';
       box-shadow: 0 8px 20px rgba(110, 193, 228, 0.3);
     }
     .lower-btn {
-      background: linear-gradient(135deg, #6B778C, #4A5568);
+      background: linear-gradient(135deg, #3d424cff, #4A5568);
       box-shadow: 0 8px 20px rgba(107, 119, 140, 0.2);
     }
     .icon {
