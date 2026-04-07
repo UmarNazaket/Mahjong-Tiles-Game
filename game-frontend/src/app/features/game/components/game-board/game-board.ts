@@ -72,50 +72,98 @@ import { MarketTracker } from '../market-tracker/market-tracker';
   styles: [`
     .game-container {
       width: 100%;
-      height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 2rem;
+      padding: 2rem 2.5rem;
       gap: 2rem;
       position: relative;
+      /* Remove height: 100% to allow natural page scrolling on short viewports */
     }
     .top-section {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
+      align-items: stretch;
+      gap: 2rem;
+      flex: 0 0 auto;
     }
     .main-play-area {
       display: flex;
-      flex: 1;
-      gap: 2rem;
-      min-height: 0; /* Important for scrollable children */
+      flex-direction: row;
+      gap: 2.5rem;
+      position: relative;
+      min-height: 0;
     }
     .center-stage {
-      flex: 2;
+      flex: 1.5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 3rem;
+      justify-content: flex-start; /* Start from top to prevent pushing into market prices */
+      padding-top: 2rem;
+      gap: 4rem;
+      min-width: 600px;
     }
     .side-panel {
       flex: 1;
-      min-width: 300px;
-      max-width: 400px;
+      min-width: 350px;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 300px); /* Constrain height to enable internal scroll */
+      min-height: 400px;
     }
     .betting-area {
       margin-top: 1rem;
     }
 
+    /* Vertical Responsiveness for 13-inch screens and smaller heights */
+    @media (max-height: 850px) {
+      .game-container {
+        padding: 1.5rem;
+        gap: 1.5rem;
+      }
+      .center-stage {
+        padding-top: 1rem;
+        gap: 2rem;
+      }
+      .main-play-area {
+        gap: 1.5rem;
+      }
+      .side-panel {
+        height: calc(100vh - 250px);
+      }
+    }
+
+    @media (max-height: 700px) {
+      .center-stage {
+        gap: 1.5rem;
+      }
+      .main-play-area {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 1280px) {
+      .center-stage {
+        min-width: 500px;
+      }
+    }
+
     @media (max-width: 1024px) {
+      .game-container {
+        padding: 1rem;
+        overflow: hidden;
+      }
       .main-play-area {
         flex-direction: column;
+        height: auto;
+        overflow: hidden;
       }
       .side-panel {
         flex: none;
-        height: 300px;
+        height: 400px;
         max-width: 100%;
+        min-width: 0;
       }
     }
   `]

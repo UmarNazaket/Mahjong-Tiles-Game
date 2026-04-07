@@ -27,34 +27,42 @@ import { TileComponent } from '../tile/tile.component';
   `,
   styles: [`
     .market-tracker {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
       padding: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1.25rem;
+      box-shadow: var(--card-shadow);
     }
     .tracker-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 0.25rem;
+      border-left: 3px solid var(--primary-color);
+      padding-left: 0.75rem;
     }
     h3 {
       margin: 0;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
+      color: var(--text-color);
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
     }
     .subtitle {
-      font-size: 0.75rem;
-      color: #aaa;
+      font-size: 0.7rem;
+      color: var(--secondary-color);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .tracker-tiles {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
     }
@@ -64,8 +72,8 @@ import { TileComponent } from '../tile/tile.component';
     }
     .divider {
       width: 1px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
+      height: 24px;
+      background: var(--border-color);
     }
   `]
 })

@@ -28,33 +28,40 @@ import { CommonModule } from '@angular/common';
       justify-content: center;
     }
     .stat-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 100px;
-      backdrop-filter: blur(5px);
+      min-width: 120px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
     }
     .reshuffle-card {
-      background: rgba(253, 203, 110, 0.1);
-      border-color: rgba(253, 203, 110, 0.3);
+      background: rgba(255, 179, 0, 0.05);
+      border-color: rgba(255, 179, 0, 0.2);
     }
     .stat-value {
       font-size: 2rem;
-      font-weight: bold;
-      color: #fff;
+      font-weight: 900;
+      color: var(--text-color);
+      line-height: 1;
     }
     .reshuffle-card .stat-value {
-      color: #fdcb6e;
+      color: var(--accent-color);
     }
     .stat-label {
-      font-size: 0.8rem;
-      color: #aaa;
+      font-size: 0.65rem;
+      color: var(--secondary-color);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
       margin-top: 0.5rem;
     }
   `]

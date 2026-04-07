@@ -59,54 +59,62 @@ import { popIn } from '../../../../shared/animations/game.animations';
     .game-over-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 100;
     }
     .game-over-modal {
-      background: #1e1e24;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
       border-radius: 24px;
       padding: 3rem;
       width: 90%;
       max-width: 450px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      color: white;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      color: var(--text-color);
     }
     .title {
-      font-size: 2.5rem;
-      color: #ee5253;
-      margin: 0 0 1rem 0;
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin: 0 0 1.5rem 0;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      font-weight: 900;
+      letter-spacing: 4px;
     }
     .reason {
-      color: #aaa;
+      color: var(--secondary-color);
       margin-bottom: 2rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .score-display {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.4);
       padding: 1.5rem;
       border-radius: 16px;
       margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .score-label {
       display: block;
-      color: #888;
-      font-size: 0.9rem;
+      color: var(--secondary-color);
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      font-weight: 800;
+      letter-spacing: 2px;
       margin-bottom: 0.5rem;
     }
     .score-value {
       font-size: 3.5rem;
       font-weight: 900;
-      color: #4cd137;
+      color: var(--accent-color);
+      text-shadow: 0 0 20px rgba(255, 179, 0, 0.3);
     }
     .name-input-section {
       display: flex;
@@ -116,21 +124,31 @@ import { popIn } from '../../../../shared/animations/game.animations';
       text-align: left;
     }
     label {
-      color: #ccc;
-      font-size: 0.9rem;
+      color: var(--secondary-color);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     input {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 1rem;
-      border-radius: 8px;
-      color: white;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      color: var(--white);
       font-size: 1.1rem;
+      font-weight: 600;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
     }
     input:focus {
-      border-color: #3498db;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(110, 193, 228, 0.2);
+      background: rgba(15, 23, 42, 0.8);
     }
     .actions {
       display: flex;
@@ -140,32 +158,36 @@ import { popIn } from '../../../../shared/animations/game.animations';
     .btn {
       padding: 1rem;
       border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-weight: bold;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .primary-btn {
-      background: #3498db;
+      background: linear-gradient(135deg, var(--primary-color), #4FA8CC);
       color: white;
+      box-shadow: 0 4px 12px rgba(110, 193, 228, 0.2);
     }
     .primary-btn:hover:not(:disabled) {
-      background: #2980b9;
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(110, 193, 228, 0.3);
     }
     .primary-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.3;
       cursor: not-allowed;
+      filter: grayscale(1);
     }
     .secondary-btn {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ccc;
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--secondary-color);
+      border: 1px solid rgba(148, 163, 184, 0.2);
     }
     .secondary-btn:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--white);
     }
   `]
 })

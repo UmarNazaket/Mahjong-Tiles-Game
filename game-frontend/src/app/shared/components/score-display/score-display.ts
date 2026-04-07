@@ -15,13 +15,13 @@ import { popIn } from '../../animations/game.animations';
   styles: [`
     .score-container {
       font-weight: 800;
-      color: #4cd137;
-      background: rgba(76, 209, 55, 0.1);
+      color: var(--accent-color);
+      background: rgba(255, 179, 0, 0.1);
       padding: 0.25rem 0.75rem;
       border-radius: 8px;
       min-width: 3rem;
       text-align: center;
-      border: 1px solid rgba(76, 209, 55, 0.3);
+      border: 1px solid rgba(255, 179, 0, 0.3);
     }
   `]
 })

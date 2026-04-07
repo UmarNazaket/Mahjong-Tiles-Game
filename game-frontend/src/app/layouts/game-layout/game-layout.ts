@@ -26,18 +26,20 @@ import { GameStore } from '../../store/game/game.store';
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background-color: #0f0f13;
+      background-color: var(--bg-dark);
       overflow: hidden;
-      color: white;
+      color: var(--text-color);
       font-family: 'Inter', 'Outfit', sans-serif;
     }
     .main-content {
       flex: 1;
-      overflow-y: auto;
+      overflow: hidden;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
     .no-header {
-      height: 100vh;
+      flex: 1;
     }
   `]
 })
