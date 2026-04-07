@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Header } from '../../shared/components/header/header';
 import { GameStore } from '../../store/game/game.store';
+import { ConfettiService } from '../../core/services/confetti.service';
 import { popIn, fadeInOut } from '../../shared/animations/game.animations';
 
 @Component({
@@ -21,6 +22,20 @@ import { popIn, fadeInOut } from '../../shared/animations/game.animations';
       <main class="main-content" [class.no-header]="!isGameRoute">
         <router-outlet></router-outlet>
       </main>
+
+      <!-- Milestone Toast Notification -->
+      <div class="milestone-toast" *ngIf="showMilestoneToast()" [@popIn]>
+        <button class="toast-close" (click)="dismissToast()">✕</button>
+        <div class="toast-icon">🏆</div>
+        <div class="toast-content">
+          <div class="toast-title">Milestone Reached!</div>
+          <div class="toast-message">
+            Congratulations! You hit <span class="toast-score">{{ currentMilestoneScore() }}</span> points!
+          </div>
+          <div class="toast-sub">Keep going — the leaderboard awaits 🚀</div>
+        </div>
+        <div class="toast-progress-bar"></div>
+      </div>
 
       <!-- Exit Confirmation Modal -->
       <div class="modal-overlay" *ngIf="showExitModal" [@fadeInOut]>
@@ -56,6 +71,102 @@ import { popIn, fadeInOut } from '../../shared/animations/game.animations';
     }
     .no-header {
       flex: 1;
+    }
+
+    /* ── Milestone Toast ── */
+    .milestone-toast {
+      position: fixed;
+      top: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      min-width: 340px;
+      max-width: 460px;
+      background: linear-gradient(135deg,
+        rgba(20, 30, 48, 0.97) 0%,
+        rgba(30, 40, 60, 0.95) 100%);
+      border: 1px solid rgba(255, 179, 0, 0.35);
+      border-radius: 20px;
+      padding: 1.25rem 1.5rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 179, 0, 0.1) inset,
+        0 0 30px rgba(255, 179, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .toast-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: color 0.2s;
+    }
+    .toast-close:hover { color: rgba(255, 255, 255, 0.7); }
+
+    .toast-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+      filter: drop-shadow(0 4px 8px rgba(255, 179, 0, 0.4));
+    }
+
+    .toast-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-title {
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #FFB300;
+      margin-bottom: 0.25rem;
+    }
+
+    .toast-message {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+      line-height: 1.3;
+    }
+
+    .toast-score {
+      color: #FFB300;
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+
+    .toast-sub {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Auto-dismiss progress bar */
+    .toast-progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, #FFB300, #FF6B6B);
+      border-radius: 0 0 20px 20px;
+      animation: shrinkBar 4s linear forwards;
+    }
+    @keyframes shrinkBar {
+      from { width: 100%; }
+      to   { width: 0%; }
     }
 
     /* Modal Styles */
@@ -140,9 +251,36 @@ import { popIn, fadeInOut } from '../../shared/animations/game.animations';
 })
 export class GameLayout {
   private router = inject(Router);
+  private confettiService = inject(ConfettiService);
   gameStore = inject(GameStore);
-  
-  showExitModal: boolean = false;
+
+  showExitModal = false;
+  readonly showMilestoneToast = signal(false);
+  readonly currentMilestoneScore = signal(0);
+
+  private toastDismissTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    // React to milestone events from the confetti service
+    effect(() => {
+      const event = this.confettiService.milestoneEvent();
+      if (event) {
+        this.currentMilestoneScore.set(event.score);
+        this.showMilestoneToast.set(true);
+
+        // Auto-dismiss after 4 seconds (matches the CSS progress bar animation)
+        if (this.toastDismissTimer) clearTimeout(this.toastDismissTimer);
+        this.toastDismissTimer = setTimeout(() => {
+          this.showMilestoneToast.set(false);
+        }, 4000);
+      }
+    });
+  }
+
+  dismissToast() {
+    if (this.toastDismissTimer) clearTimeout(this.toastDismissTimer);
+    this.showMilestoneToast.set(false);
+  }
 
   get isGameRoute(): boolean {
     return this.router.url.includes('/game');
@@ -158,6 +296,8 @@ export class GameLayout {
 
   confirmExit() {
     this.showExitModal = false;
+    this.confettiService.reset();
+    this.showMilestoneToast.set(false);
     this.gameStore.resetGame();
     this.router.navigate(['/']);
   }
