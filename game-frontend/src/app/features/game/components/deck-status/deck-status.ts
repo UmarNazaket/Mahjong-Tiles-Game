@@ -64,6 +64,26 @@ import { CommonModule } from '@angular/common';
       letter-spacing: 1.5px;
       margin-top: 0.5rem;
     }
+
+    @media (max-width: 768px) {
+      .deck-status-container {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        padding: 0.75rem 1rem;
+        min-width: 90px;
+        flex: 1;
+      }
+      .stat-value {
+        font-size: 1.4rem;
+      }
+      .stat-label {
+        font-size: 0.5rem;
+        letter-spacing: 1px;
+        margin-top: 0.25rem;
+      }
+    }
   `]
 })
 export class DeckStatus {

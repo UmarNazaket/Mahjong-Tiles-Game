@@ -130,6 +130,32 @@ import { TileComponent } from '../tile/tile.component';
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+    
+    @media (max-width: 768px) {
+      .market-tracker {
+        padding: 1rem;
+        gap: 1rem;
+        width: 100%;
+      }
+      .tracker-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .tracker-tiles {
+        gap: 1rem;
+        /* Keep horizontal scrolling but shrink gap */
+      }
+      .header-main h3 {
+        font-size: 0.75rem;
+      }
+      .tooltip {
+        right: auto;
+        left: 0;
+        width: 240px; /* slightly narrower for safety */
+      }
+    }
+
     .tracker-tiles {
       display: flex;
       align-items: center;

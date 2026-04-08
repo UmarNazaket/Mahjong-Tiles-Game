@@ -70,6 +70,23 @@ import { fadeInOut } from '../../../../shared/animations/game.animations';
       flex-wrap: wrap;
       margin-top: 1rem;
     }
+    
+    @media (max-width: 768px) {
+      .hand-display {
+        padding: 1rem;
+        border-radius: 16px;
+      }
+      .total-value-container {
+        padding: 1rem 2rem;
+      }
+      .total-value {
+        font-size: 1.5rem;
+      }
+      .tiles-container {
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+    }
   `]
 })
 export class HandDisplay {

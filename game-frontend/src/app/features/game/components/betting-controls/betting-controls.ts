@@ -111,6 +111,30 @@ import { BetType } from '../../../../core/enums/game.enums';
     .btn:hover:not(:disabled) .shortcut {
       opacity: 0.6;
     }
+
+    @media (max-width: 768px) {
+      .betting-controls {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .buttons {
+        gap: 1rem;
+      }
+      .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+      }
+      .shortcut {
+        right: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
   `]
 })
 export class BettingControls {
