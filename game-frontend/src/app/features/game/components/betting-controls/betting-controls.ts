@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BetType } from '../../../../core/enums/game.enums';
 
@@ -13,10 +13,12 @@ import { BetType } from '../../../../core/enums/game.enums';
         <button [disabled]="disabled" class="btn higher-btn" (click)="onBet('HIGHER')">
           <span class="icon">📈</span>
           <span class="text">Higher</span>
+          <span class="shortcut">▲</span>
         </button>
         <button [disabled]="disabled" class="btn lower-btn" (click)="onBet('LOWER')">
           <span class="icon">📉</span>
           <span class="text">Lower</span>
+          <span class="shortcut">▼</span>
         </button>
       </div>
     </div>
@@ -95,11 +97,38 @@ import { BetType } from '../../../../core/enums/game.enums';
     .icon {
       font-size: 1.4rem;
     }
+    .shortcut {
+      position: absolute;
+      right: 1.25rem;
+      font-size: 0.6rem;
+      font-weight: 900;
+      opacity: 0.35;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      transition: opacity 0.2s;
+    }
+    .btn:hover:not(:disabled) .shortcut {
+      opacity: 0.6;
+    }
   `]
 })
 export class BettingControls {
   @Input() disabled: boolean = false;
   @Output() bet = new EventEmitter<BetType>();
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (this.disabled) return;
+    
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.onBet('HIGHER');
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.onBet('LOWER');
+    }
+  }
 
   onBet(type: string) {
     this.bet.emit(type as BetType);
