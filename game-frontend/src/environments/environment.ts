@@ -4,7 +4,7 @@
 export const environment = {
     production: false,
     apiUrl: 'http://localhost:8000/api',
-    appName: 'Mahjong Tiles Game',
+    appName: 'Mahjong Hand Betting Game',
     version: '1.0.0',
 
     // Feature flags
