@@ -58,7 +58,7 @@ export class GameService {
 
     // Reshuffle if not enough tiles
     if (newDrawPile.length < this.config.handSize) {
-      newDrawPile = this.deckService.reshuffleWithFreshDeck(newDiscardPile);
+      newDrawPile = this.deckService.reshuffleWithFreshDeck([...newDrawPile, ...newDiscardPile]);
       newDiscardPile = [];
       reshuffleCount++;
     }

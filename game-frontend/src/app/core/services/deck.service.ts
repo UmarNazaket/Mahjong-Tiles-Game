@@ -82,8 +82,20 @@ export class DeckService {
   }
 
   reshuffleWithFreshDeck(discardPile: Tile[]): Tile[] {
+    // 1. Generate a new deck
     const newDeck = this.generateFullDeck();
-    const combined = [...newDeck, ...discardPile];
+    
+    // 2. Give the new tiles unique IDs to avoid Angular DOM conflicts
+    const timestamp = Date.now();
+    const uniqueNewDeck = newDeck.map(tile => ({
+      ...tile,
+      id: `${tile.id}_refreshed_${timestamp}`
+    }));
+
+    // 3. Combine with Discard Pile as per requirements
+    const combined = [...uniqueNewDeck, ...discardPile];
+    
+    // 4. Return shuffled
     return this.shuffle(combined);
   }
 }
