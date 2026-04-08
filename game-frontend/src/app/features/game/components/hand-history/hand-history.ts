@@ -26,14 +26,16 @@ import { slideIn } from '../../../../shared/animations/game.animations';
              [@slideIn]>
           <div class="item-header">
             <span class="round-num">Round {{ history.length - i }}</span>
-            <div class="result-box">
-              <span class="hand-val-badge">Value: {{ result.currentHandValue }}</span>
-              <div class="result-badge" 
-                   [class.won]="result.won" 
-                   [class.lost]="!result.won && result.currentHandValue !== result.previousHandValue"
-                   [class.tie]="result.currentHandValue === result.previousHandValue">
-                {{ result.won ? 'Won' : (result.currentHandValue === result.previousHandValue ? 'Tie' : 'Lost') }} ({{ result.betType }})
-              </div>
+            <div class="center-scores">
+              <span class="target-val">Previous: {{ result.previousHandValue }}</span>
+              <span class="divider">|</span>
+              <span class="hand-val">Current: <span class="bold-val">{{ result.currentHandValue }}</span></span>
+            </div>
+            <div class="result-badge" 
+                 [class.won]="result.won" 
+                 [class.lost]="!result.won && result.currentHandValue !== result.previousHandValue"
+                 [class.tie]="result.currentHandValue === result.previousHandValue">
+              {{ result.won ? 'Won' : (result.currentHandValue === result.previousHandValue ? 'Tie' : 'Lost') }} ({{ result.betType }})
             </div>
           </div>
           
@@ -132,20 +134,34 @@ import { slideIn } from '../../../../shared/animations/game.animations';
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .result-box {
+    .center-scores {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-    .hand-val-badge {
-      font-size: 0.6rem;
-      font-weight: 900;
-      background: rgba(255, 179, 0, 0.1);
-      color: var(--accent-color);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .target-val {
+      color: var(--secondary-color);
+      opacity: 0.8;
+      font-weight: 700;
+    }
+    .divider {
+      color: rgba(255, 255, 255, 0.15);
+    }
+    .hand-val {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 700;
+    }
+    .bold-val {
+      font-weight: 900;
+      color: #FFB300;
+      font-size: 0.7rem;
     }
     .result-badge {
       font-size: 0.55rem;
