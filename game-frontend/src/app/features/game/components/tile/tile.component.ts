@@ -262,6 +262,26 @@ import { SoundService } from '../../../../core/services/sound.service';
     .change-indicator.up   { color: #10ac84; }
     .change-indicator.down { color: #ee5253; }
 
+    /* ── Responsive Tile Sizes ── */
+    @media (max-width: 1024px) {
+      .tile { width: 68px; height: 90px; }
+      .tile-icon { font-size: 2rem; }
+      .tile-value { font-size: 0.8rem; padding: 1px 4px; }
+      .back-inner-border { width: 34px; height: 34px; }
+      .back-symbol { font-size: 1.25rem; }
+    }
+    @media (max-width: 768px) {
+      .tile { width: 54px; height: 74px; }
+      .tile-name { font-size: 0.4rem; letter-spacing: 0; }
+      .tile-icon { font-size: 1.5rem; }
+      .tile-value { font-size: 0.7rem; padding: 0 4px; }
+      .change-indicator { font-size: 0.45rem; }
+      .back-inner-border { width: 28px; height: 28px; }
+      .back-symbol { font-size: 1rem; }
+      .back-ornament { font-size: 0.4rem; }
+      .tile-face { padding: 4px 2px; }
+    }
+
     /* ── Tooltip ── */
     .tile {
       position: relative; /* tooltip positioned relative to tile */

@@ -72,6 +72,27 @@ import { ScoreDisplay } from '../score-display/score-display';
       box-shadow: 0 4px 12px rgba(238, 82, 83, 0.3);
       transform: translateY(-1px);
     }
+    
+    @media (max-width: 768px) {
+      .game-header {
+        padding: 0.75rem 1rem;
+      }
+      .logo {
+        font-size: 0.9rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .game-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .logo {
+        display: none; /* Hide logo on tiny screens to prioritize score & exit */
+      }
+      .score-section {
+        flex: 1;
+      }
+    }
   `]
 })
 export class Header {

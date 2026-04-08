@@ -64,7 +64,8 @@ import { popIn, fadeInOut } from '../../shared/animations/game.animations';
     }
     .main-content {
       flex: 1;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -73,15 +74,24 @@ import { popIn, fadeInOut } from '../../shared/animations/game.animations';
       flex: 1;
     }
 
-    /* ── Milestone Toast ── */
+    /* Restrict global scroll on large desktop screens */
+    @media (min-width: 1100px) {
+      .layout-container {
+        overflow: hidden;
+      }
+      .main-content {
+        overflow-y: hidden;
+      }
+    }
+
     .milestone-toast {
       position: fixed;
       top: 1.25rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 2000;
-      min-width: 340px;
-      max-width: 460px;
+      width: 90%;
+      max-width: 400px;
       background: linear-gradient(135deg,
         rgba(20, 30, 48, 0.97) 0%,
         rgba(30, 40, 60, 0.95) 100%);
