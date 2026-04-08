@@ -21,15 +21,21 @@ import { slideIn } from '../../../../shared/animations/game.animations';
         <div class="history-item" 
              *ngFor="let result of history; let i = index" 
              [class.won]="result.won" 
-             [class.lost]="!result.won"
+             [class.lost]="!result.won && result.currentHandValue !== result.previousHandValue"
+             [class.tie]="result.currentHandValue === result.previousHandValue"
              [@slideIn]>
           <div class="item-header">
             <span class="round-num">Round {{ history.length - i }}</span>
-            <div class="result-box">
-              <span class="hand-val-badge">Value: {{ result.currentHandValue }}</span>
-              <div class="result-badge" [class.won]="result.won" [class.lost]="!result.won">
-                {{ result.won ? 'Won' : 'Lost' }} ({{ result.betType }})
-              </div>
+            <div class="center-scores">
+              <span class="target-val">Previous: {{ result.previousHandValue }}</span>
+              <span class="divider">|</span>
+              <span class="hand-val">Current: <span class="bold-val">{{ result.currentHandValue }}</span></span>
+            </div>
+            <div class="result-badge" 
+                 [class.won]="result.won" 
+                 [class.lost]="!result.won && result.currentHandValue !== result.previousHandValue"
+                 [class.tie]="result.currentHandValue === result.previousHandValue">
+              {{ result.won ? 'Won' : (result.currentHandValue === result.previousHandValue ? 'Tie' : 'Lost') }} ({{ result.betType }})
             </div>
           </div>
           
@@ -108,6 +114,9 @@ import { slideIn } from '../../../../shared/animations/game.animations';
     .history-item.lost {
       border-left-color: #ee5253;
     }
+    .history-item.tie {
+      border-left-color: #3498db;
+    }
     .history-item:hover {
       background: rgba(15, 23, 42, 0.6);
       transform: translateX(4px);
@@ -125,20 +134,34 @@ import { slideIn } from '../../../../shared/animations/game.animations';
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .result-box {
+    .center-scores {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-    .hand-val-badge {
-      font-size: 0.6rem;
-      font-weight: 900;
-      background: rgba(255, 179, 0, 0.1);
-      color: var(--accent-color);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .target-val {
+      color: var(--secondary-color);
+      opacity: 0.8;
+      font-weight: 700;
+    }
+    .divider {
+      color: rgba(255, 255, 255, 0.15);
+    }
+    .hand-val {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 700;
+    }
+    .bold-val {
+      font-weight: 900;
+      color: #FFB300;
+      font-size: 0.7rem;
     }
     .result-badge {
       font-size: 0.55rem;
@@ -155,6 +178,10 @@ import { slideIn } from '../../../../shared/animations/game.animations';
     .result-badge.lost {
       background: rgba(238, 82, 83, 0.15);
       color: #ee5253;
+    }
+    .result-badge.tie {
+      background: rgba(52, 152, 219, 0.15);
+      color: #3498db;
     }
     .tiles-mini {
       display: flex;

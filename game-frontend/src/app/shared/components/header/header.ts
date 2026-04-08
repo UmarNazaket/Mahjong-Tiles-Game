@@ -11,7 +11,6 @@ import { ScoreDisplay } from '../score-display/score-display';
       <div class="logo">Mahjong Hand Betting</div>
       
       <div class="score-section">
-        <span class="label">Score:</span>
         <app-score-display [score]="score"></app-score-display>
       </div>
       

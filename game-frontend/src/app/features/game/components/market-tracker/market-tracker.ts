@@ -11,8 +11,18 @@ import { TileComponent } from '../tile/tile.component';
   template: `
     <div class="market-tracker">
       <div class="tracker-header">
-        <h3>Market Prices</h3>
-        <span class="subtitle">Live non-number tile values</span>
+        <div class="header-main">
+          <h3>Market Prices</h3>
+          <span class="subtitle">Live non-number tile values</span>
+        </div>
+        <div class="info-icon">
+          i
+          <div class="tooltip">
+            <strong>Non-Number Tiles:</strong><br> Start at a base value of 5.<br><br>
+            <strong>Dynamic Scaling:</strong><br> Increases +1 if part of a winning hand. Decreases -1 if part of a tie/losing hand.<br><br>
+            <strong>Game Ends:</strong><br> If any single tile reaches 0 or 10.
+          </div>
+        </div>
       </div>
       <div class="tracker-tiles">
         <div class="tile-group" title="Winds">
@@ -30,19 +40,26 @@ import { TileComponent } from '../tile/tile.component';
       background: var(--bg-card);
       backdrop-filter: blur(12px);
       border-radius: 20px;
-      padding: 1rem;
+      padding: 1.25rem;
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
       box-shadow: var(--card-shadow);
+      z-index: 50;
+      position: relative;
     }
     .tracker-header {
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+      justify-content: space-between;
+      align-items: flex-start;
       border-left: 3px solid var(--primary-color);
       padding-left: 0.75rem;
+    }
+    .header-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
     h3 {
       margin: 0;
@@ -51,6 +68,60 @@ import { TileComponent } from '../tile/tile.component';
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.5px;
+    }
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-top: 0.15rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--secondary-color);
+      font-size: 0.65rem;
+      font-weight: 900;
+      font-family: serif;
+      cursor: help;
+      position: relative;
+      transition: background 0.2s, color 0.2s;
+    }
+    .info-icon:hover {
+      background: var(--primary-color);
+      color: var(--bg-dark);
+    }
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      top: 140%;
+      right: -10px;
+      width: 260px;
+      background: rgba(15, 23, 42, 0.98);
+      color: var(--white);
+      padding: 1.25rem;
+      border-radius: 12px;
+      font-family: 'Outfit', 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.2px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 9999;
+      pointer-events: none;
+      text-align: left;
+    }
+    .tooltip strong {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .info-icon:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      top: 120%;
     }
     .subtitle {
       font-size: 0.7rem;

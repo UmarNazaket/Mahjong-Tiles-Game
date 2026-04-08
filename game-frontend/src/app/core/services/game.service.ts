@@ -58,7 +58,7 @@ export class GameService {
 
     // Reshuffle if not enough tiles
     if (newDrawPile.length < this.config.handSize) {
-      newDrawPile = this.deckService.reshuffleWithFreshDeck(newDiscardPile);
+      newDrawPile = this.deckService.reshuffleWithFreshDeck([...newDrawPile, ...newDiscardPile]);
       newDiscardPile = [];
       reshuffleCount++;
     }
@@ -87,7 +87,7 @@ export class GameService {
 
     const newScore = won ? currentState.score + 1 : currentState.score;
 
-    const newTileValueMap = this.scoringService.applyDynamicScaling(newTiles, won, currentState.tileValueMap);
+    const newTileValueMap = this.scoringService.applyDynamicScaling(previousHand.tiles, won, currentState.tileValueMap);
 
     // SYNC tiles one last time with the NEW scaled prices for the next round
     const finalHandTiles = newTiles.map(tile => {
