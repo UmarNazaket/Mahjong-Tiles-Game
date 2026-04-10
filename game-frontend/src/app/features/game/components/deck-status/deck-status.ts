@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DEFAULT_GAME_CONFIG } from '../../../../core/config/game.config';
 
 @Component({
   selector: 'app-deck-status',
@@ -16,7 +17,7 @@ import { CommonModule } from '@angular/common';
         <div class="stat-label">Discard Pile</div>
       </div>
       <div class="stat-card reshuffle-card">
-        <div class="stat-value">{{ reshuffleCount }} / 3</div>
+        <div class="stat-value">{{ reshuffleCount }} / {{ maxReshuffles }}</div>
         <div class="stat-label">Reshuffles</div>
       </div>
     </div>
@@ -90,4 +91,6 @@ export class DeckStatus {
   @Input() drawCount: number = 0;
   @Input() discardCount: number = 0;
   @Input() reshuffleCount: number = 0;
+  
+  maxReshuffles = DEFAULT_GAME_CONFIG.maxReshuffles;
 }

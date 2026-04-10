@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Tile } from '../../../../core/models/tile.model';
 import { TileCategory, WindType, DragonType } from '../../../../core/enums/game.enums';
 import { TileComponent } from '../tile/tile.component';
+import { DEFAULT_GAME_CONFIG } from '../../../../core/config/game.config';
 
 @Component({
   selector: 'app-market-tracker',
@@ -196,8 +197,8 @@ export class MarketTracker implements OnChanges {
       id: `wind_${i}`,
       category: TileCategory.Wind,
       name: `${w} Wind`,
-      baseValue: 5,
-      currentValue: 5
+      baseValue: DEFAULT_GAME_CONFIG.nonNumberBaseValue,
+      currentValue: DEFAULT_GAME_CONFIG.nonNumberBaseValue
     }));
 
     // Dragons
@@ -205,8 +206,8 @@ export class MarketTracker implements OnChanges {
       id: `dragon_${i}`,
       category: TileCategory.Dragon,
       name: `${d} Dragon`,
-      baseValue: 5,
-      currentValue: 5
+      baseValue: DEFAULT_GAME_CONFIG.nonNumberBaseValue,
+      currentValue: DEFAULT_GAME_CONFIG.nonNumberBaseValue
     }));
   }
 
